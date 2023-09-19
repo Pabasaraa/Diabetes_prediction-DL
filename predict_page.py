@@ -4,6 +4,20 @@ import streamlit as st
 import pickle
 import numpy as np
 
+def load_NB_model():
+    with open('BernoulliNB.pkl', 'rb') as file:
+        data = pickle.load(file)
+    return data
+
+# Load the models
+naiveBayesModel = load_NB_model()
+
+# Get the models
+BernoulliNB = naiveBayesModel["model"]
+
+# Accuracy
+accuracyNB = naiveBayesModel.get("accuracy", 0.0)
+
 def show_predict_page():
     st.title("DIABETES PREDICTION TEST")
 
@@ -165,4 +179,19 @@ def show_predict_page():
 
         X = np.array([updated_list])
         
-        st.write(X)
+        # Prediction
+        diabetesNB = BernoulliNB.predict(X)
+
+        st.write(""" """)
+
+        st.write("""### Predictions & Accuracies""")
+        st.write("""#### - Naive Bayes Model: """)
+
+        if diabetesNB[0] == 0:
+            st.write("##### You are at low risk of having DIABETES")
+        elif diabetesNB[0] == 1:
+            st.write("##### You are at high risk of having PRE DIABETES")
+        elif diabetesNB[0] == 2:
+            st.write("##### You are at high risk of having DIABETES")
+
+        st.write(f"Accuracy: {accuracyNB:.2f}%")
