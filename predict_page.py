@@ -4,19 +4,29 @@ import streamlit as st
 import pickle
 import numpy as np
 
+
 def load_NB_model():
     with open('BernoulliNB.pkl', 'rb') as file:
         data = pickle.load(file)
     return data
 
+def load_kNearestNeighbour_model():
+    with open('KNeighborsClassifier.pkl', 'rb') as file:
+        data = pickle.load(file)
+    return data
+
+
 # Load the models
 naiveBayesModel = load_NB_model()
+kNearestNeighbourModel = load_kNearestNeighbour_model()
 
 # Get the models
 BernoulliNB = naiveBayesModel["model"]
+kNearestNeighbour = kNearestNeighbourModel["model"]
 
 # Accuracy
 accuracyNB = naiveBayesModel.get("accuracy", 0.0)
+accuracyKNN = kNearestNeighbourModel.get("accuracy", 0.0)
 
 def show_predict_page():
     st.title("DIABETES PREDICTION TEST")
@@ -181,6 +191,7 @@ def show_predict_page():
         
         # Prediction
         diabetesNB = BernoulliNB.predict(X)
+        diabetesKNN = kNearestNeighbour.predict(X)
 
         st.write(""" """)
 
@@ -195,3 +206,15 @@ def show_predict_page():
             st.write("##### You are at high risk of having DIABETES")
 
         st.write(f"Accuracy: {accuracyNB:.2f}%")
+
+
+        st.write("""#### - K Nearest Neighbour Model: """)
+
+        if diabetesKNN[0] == 0:
+            st.write("##### You are at low risk of having DIABETES")
+        elif diabetesKNN[0] == 1:
+            st.write("##### You are at high risk of having PRE DIABETES")
+        elif diabetesKNN[0] == 2:
+            st.write("##### You are at high risk of having DIABETES")
+
+        st.write(f"Accuracy: {accuracyKNN:.2f}%")
