@@ -15,18 +15,25 @@ def load_kNearestNeighbour_model():
         data = pickle.load(file)
     return data
 
+def load_decisionTree_model():
+    with open('XGBoost_model.pkl', 'rb') as file:
+        data = pickle.load(file)
+    return data
 
 # Load the models
 naiveBayesModel = load_NB_model()
 kNearestNeighbourModel = load_kNearestNeighbour_model()
+decisionTreeModel = load_decisionTree_model()
 
 # Get the models
 BernoulliNB = naiveBayesModel["model"]
 kNearestNeighbour = kNearestNeighbourModel["model"]
+decisionTree = decisionTreeModel["model"]
 
 # Accuracy
 accuracyNB = naiveBayesModel.get("accuracy", 0.0)
 accuracyKNN = kNearestNeighbourModel.get("accuracy", 0.0)
+accuracyDT = decisionTreeModel.get("accuracy", 0.0)
 
 def show_predict_page():
     st.title("DIABETES PREDICTION TEST")
@@ -192,6 +199,8 @@ def show_predict_page():
         # Prediction
         diabetesNB = BernoulliNB.predict(X)
         diabetesKNN = kNearestNeighbour.predict(X)
+        diabetesDT = decisionTree.predict(X)
+        diabetesLR = LogisticRegression.predict(X)
 
         st.write(""" """)
 
@@ -207,7 +216,6 @@ def show_predict_page():
 
         st.write(f"Accuracy: {accuracyNB:.2f}%")
 
-
         st.write("""#### - K Nearest Neighbour Model: """)
 
         if diabetesKNN[0] == 0:
@@ -218,3 +226,16 @@ def show_predict_page():
             st.write("##### You are at high risk of having DIABETES")
 
         st.write(f"Accuracy: {accuracyKNN:.2f}%")
+
+        st.write("""#### - Decision Tree Model: """)
+
+        if diabetesDT[0] == 0:
+            st.write("##### You are at low risk of having DIABETES")
+        elif diabetesDT[0] == 1:
+            st.write("##### You are at high risk of having PRE DIABETES")
+        elif diabetesDT[0] == 2:
+            st.write("##### You are at high risk of having DIABETES")
+
+        st.write(f"Accuracy: {accuracyDT:.2f}%")
+
+        
